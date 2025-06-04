@@ -61,7 +61,7 @@ Una API REST robusta construida con Node.js, Express, TypeScript y MongoDB que o
 
 1. **Clonar el repositorio**
    ```bash
-   git clone <url-del-repositorio>
+   git clone https://github.com/Manolinhopng/parcialElectiva3Back.git
    cd gestion-usuarios-roles
    ```
 
