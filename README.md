@@ -1,6 +1,26 @@
 # API de Gestión de Usuarios y Roles
 
-Una API REST robusta construida con Node.js, Express, TypeScript y MongoDB para la gestión de usuarios y roles con validaciones completas y arquitectura escalable.
+## 🎯 Descripción del Problema
+
+En muchas organizaciones, la gestión manual de usuarios y roles se vuelve compleja y propensa a errores cuando crece el número de empleados. Los problemas comunes incluyen:
+
+- **Duplicación de datos**: Usuarios registrados múltiples veces con diferentes identificaciones o correos
+- **Asignación incorrecta de roles**: Empleados con permisos inadecuados para sus funciones
+- **Falta de validación**: Datos incompletos o incorrectos en los registros de usuarios
+- **Dificultad de consulta**: No hay manera eficiente de ver usuarios con sus roles asignados
+- **Inconsistencia**: Diferentes formatos de datos y falta de estandarización
+
+## 🚀 Solución Propuesta
+
+Esta API REST resuelve estos problemas proporcionando:
+
+- **Sistema centralizado** para gestión de usuarios y roles
+- **Validaciones robustas** que previenen datos duplicados o incorrectos
+- **Relaciones consistentes** entre usuarios y roles
+- **Consultas optimizadas** para obtener información completa
+- **Arquitectura escalable** que crece con las necesidades de la organización
+
+Una API REST robusta construida con Node.js, Express, TypeScript y MongoDB que ofrece un sistema completo de gestión con validaciones automáticas y arquitectura escalable.
 
 ## 🚀 Características
 
@@ -18,7 +38,26 @@ Una API REST robusta construida con Node.js, Express, TypeScript y MongoDB para 
 - MongoDB (local o Atlas)
 - npm o yarn
 
-## 🛠️ Instalación
+## 🛠️ Instalación y Configuración
+
+### Paso 1: Preparar el entorno
+
+1. **Verificar Node.js**
+   ```bash
+   node --version  # Debe ser v16 o superior
+   npm --version
+   ```
+
+2. **Instalar MongoDB** (si no lo tienes)
+   - **Opción A - MongoDB Local:**
+     - Descarga desde [mongodb.com](https://www.mongodb.com/try/download/community)
+     - Sigue las instrucciones de instalación para tu SO
+   - **Opción B - MongoDB Atlas (Cloud):**
+     - Crea una cuenta gratuita en [MongoDB Atlas](https://www.mongodb.com/atlas)
+     - Crea un cluster gratuito
+     - Obtén tu cadena de conexión
+
+### Paso 2: Configurar el proyecto
 
 1. **Clonar el repositorio**
    ```bash
@@ -35,16 +74,93 @@ Una API REST robusta construida con Node.js, Express, TypeScript y MongoDB para 
    
    Crear un archivo `.env` en la raíz del proyecto:
    ```env
+   # Puerto del servidor
    PORT=5000
+   
+   # Base de datos - Elige una opción:
+   
+   # Opción 1: MongoDB Local
    MONGODB_URI=mongodb://localhost:27017/usuarios_roles
-   # O para MongoDB Atlas:
-   # MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/usuarios_roles
+   
+   # Opción 2: MongoDB Atlas (reemplaza con tus datos)
+   # MONGODB_URI=mongodb+srv://usuario:password@cluster.mongodb.net/usuarios_roles?retryWrites=true&w=majority
    ```
 
-4. **Ejecutar en desarrollo**
+### Paso 3: Ejecutar el proyecto
+
+1. **Iniciar MongoDB** (solo si usas instalación local)
    ```bash
-   npm run dev
+   # En Windows
+   mongod
+   
+   # En macOS/Linux
+   sudo systemctl start mongod
+   # o
+   brew services start mongodb/brew/mongodb-community
    ```
+
+2. **Ejecutar la aplicación**
+   ```bash
+   # Modo desarrollo (con auto-reload)
+   npm run dev
+   
+   # O compilar y ejecutar
+   npm run build
+   npm start
+   ```
+
+3. **Verificar que funciona**
+   - Abre tu navegador en: http://localhost:5000
+   - Deberías ver: "API de Gestión de Usuarios y Roles - ¡Funcionando!"
+
+### Paso 4: Probar la API
+
+1. **Crear tu primer rol**
+   ```bash
+   curl -X POST http://localhost:5000/api/roles \
+     -H "Content-Type: application/json" \
+     -d '{
+       "nombre": "Administrador",
+       "descripcion": "Acceso completo al sistema"
+     }'
+   ```
+
+2. **Verificar que se creó**
+   ```bash
+   curl http://localhost:5000/api/roles
+   ```
+
+3. **Crear un usuario** (usa el ID del rol creado)
+   ```bash
+   curl -X POST http://localhost:5000/api/users \
+     -H "Content-Type: application/json" \
+     -d '{
+       "nombres": "Juan",
+       "apellidos": "Pérez",
+       "identificacion": "12345678",
+       "email": "juan.perez@email.com",
+       "rolId": "REEMPLAZA_CON_EL_ID_DEL_ROL"
+     }'
+   ```
+
+### ⚠️ Solución de Problemas Comunes
+
+**Error: "MongoDB connection failed"**
+- Verifica que MongoDB esté ejecutándose
+- Confirma que la URL en MONGODB_URI sea correcta
+- Para Atlas, verifica usuario, password y whitelist IP
+
+**Error: "Port 5000 already in use"**
+- Cambia el puerto en el archivo `.env`: `PORT=3001`
+- O termina el proceso que usa el puerto 5000
+
+**Error: "Cannot find module"**
+- Ejecuta `npm install` nuevamente
+- Verifica que estés en el directorio correcto del proyecto
+
+**Error de validación al crear usuarios**
+- Asegúrate de crear al menos un rol antes de crear usuarios
+- Verifica que el `rolId` sea un ObjectId válido de MongoDB
 
 ## 🏗️ Estructura del Proyecto
 
@@ -175,27 +291,65 @@ La API incluye un sistema robusto de manejo de errores:
 - Validación de existencia de roles antes de asignar usuarios
 - Manejo centralizado de errores asíncronos
 
-## 🧪 Testing
+## 🧪 Guía de Pruebas Paso a Paso
 
-Para probar la API, puedes usar herramientas como:
+### Usando curl (Terminal)
 
-- **Postman**: Importar la colección de endpoints
-- **curl**: Comandos de línea
-- **Thunder Client**: Extensión de VS Code
+1. **Crear roles del sistema**
+   ```bash
+   # Crear rol de Administrador
+   curl -X POST http://localhost:5000/api/roles \
+     -H "Content-Type: application/json" \
+     -d '{
+       "nombre": "Administrador",
+       "descripcion": "Acceso completo al sistema"
+     }'
 
-### Ejemplo con curl:
+   # Crear rol de Usuario
+   curl -X POST http://localhost:5000/api/roles \
+     -H "Content-Type: application/json" \
+     -d '{
+       "nombre": "Usuario",
+       "descripcion": "Acceso básico"
+     }'
+   ```
 
-```bash
-# Crear un rol
-curl -X POST http://localhost:5000/api/roles \
-  -H "Content-Type: application/json" \
-  -d '{"nombre":"Administrador","descripcion":"Acceso completo"}'
+2. **Listar todos los roles**
+   ```bash
+   curl http://localhost:5000/api/roles
+   ```
 
-# Crear un usuario
-curl -X POST http://localhost:5000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"nombres":"Juan","apellidos":"Pérez","identificacion":"12345678","email":"juan@email.com","rolId":"ROLE_ID_AQUI"}'
-```
+3. **Crear usuarios** (reemplaza ROLE_ID con un ID real)
+   ```bash
+   curl -X POST http://localhost:5000/api/users \
+     -H "Content-Type: application/json" \
+     -d '{
+       "nombres": "María",
+       "apellidos": "González",
+       "identificacion": "87654321",
+       "email": "maria.gonzalez@email.com",
+       "rolId": "ROLE_ID_AQUI"
+     }'
+   ```
+
+4. **Ver usuarios con roles**
+   ```bash
+   curl http://localhost:5000/api/users/with-roles
+   ```
+
+### Usando Postman
+
+1. **Importar colección**: Crear requests con los siguientes endpoints:
+   - `GET http://localhost:5000/api/roles`
+   - `POST http://localhost:5000/api/roles`
+   - `GET http://localhost:5000/api/users`
+   - `POST http://localhost:5000/api/users`
+   - `GET http://localhost:5000/api/users/with-roles`
+
+2. **Headers necesarios**: 
+   ```
+   Content-Type: application/json
+   ```
 
 ## 🔄 Scripts Disponibles
 
