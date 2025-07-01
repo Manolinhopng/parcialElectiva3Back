@@ -384,7 +384,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ## 👨‍💻 Autor
 
-Tu nombre - [tu.email@ejemplo.com]
+Tu nombre - rmanuelorrego@gmail.com
 
 ## 🔮 Roadmap
 
